@@ -1,0 +1,10 @@
+---
+# Kevin M. Meziere <kmeziere@jpcatholic.com>
+# Copyright 2015, John Paul the Great Catholic University
+
+sniffle_release:"rel"
+sniffle_version_required: "fifo-sniffle-0.6.1pre20141209T150717Z"
+sniffle_cookie: "{{sniffle_cookie}}"
+s3_access_key: "{{s3_access_key}}"
+s3_secret_key: "{{s3_secret_key}}"
+s3_host: "{{s3_host}}:443"
