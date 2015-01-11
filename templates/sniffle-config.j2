@@ -200,6 +200,13 @@ dtrace.aae = on
 ##   - one of: on, off
 package.aae = on
 
+## 
+## Default: on
+## 
+## Acceptable values:
+##   - one of: on, off
+consensus = on
+
 ## Name of the Erlang node
 ## 
 ## Default: sniffle@127.0.0.1
@@ -481,6 +488,36 @@ log.debug.file = /var/log/sniffle/debug.log
 ##   - one of: on, off
 log.syslog = off
 
+## the log level of the watchdog log
+## 
+## Default: error
+## 
+## Acceptable values:
+##   - one of: debug, info, warning, error
+log.watchdog.level = error
+
+## the log level of the watchdog log
+## 
+## Default: fifo
+## 
+## Acceptable values:
+##   - text
+log.watchdog.cluster = fifo
+
+## the log level of the watchdog log
+## 
+## Default: sniffle
+## 
+## Acceptable values:
+##   - text
+log.watchdog.service = sniffle
+
+## The ip of the watchdog server
+## 
+## Acceptable values:
+##   - an IP/port pair, e.g. 127.0.0.1:10011
+## log.watchdog.host.name = 127.0.0.1:4444
+
 ## Whether to write a crash log, and where.
 ## Commented/omitted/undefined means no crash logger.
 ## 
@@ -543,27 +580,21 @@ log.error.redirect = on
 ##   - an integer
 log.error.messages_per_second = 100
 
-## bitcask data root
+## Default database destination
 ## 
-## Default: /var/db/sniffle/bitcask
+## Default: /var/db/sniffle
 ## 
 ## Acceptable values:
 ##   - text
-bitcask.data_root = /var/db/sniffle/bitcask
+db.dir = /var/db/sniffle
 
-## Configure how Bitcask writes data to disk.
-## erlang: Erlang's built-in file API
-## nif: Direct calls to the POSIX C API
-## The NIF mode provides higher throughput for certain
-## workloads, but has the potential to negatively impact
-## the Erlang VM, leading to higher worst-case latencies
-## and possible throughput collapse.
+## Default database destination
 ## 
-## Default: erlang
+## Default: leveldb
 ## 
 ## Acceptable values:
-##   - one of: erlang, nif
-bitcask.io_mode = erlang
+##   - one of: leveldb, hanoidb, bitcask
+db.backend = leveldb
 
 ## leveldb data_root
 ## 
@@ -615,38 +646,6 @@ leveldb.bloomfilter = on
 ## Acceptable values:
 ##   - one of: on, off
 leveldb.compression = off
-
-## Default database destination
-## 
-## Default: /var/db/sniffle
-## 
-## Acceptable values:
-##   - text
-db.dir = /var/db/sniffle
-
-## Default database destination
-## 
-## Default: leveldb
-## 
-## Acceptable values:
-##   - one of: leveldb, hanoidb, bitcask
-db.backend = leveldb
-
-## hanoidb data_root
-## 
-## Default: /var/db/sniffle/hanoidb
-## 
-## Acceptable values:
-##   - text
-hanoidb.data_root = /var/db/sniffle/hanoidb
-
-## The default realm to use for snarl calls.
-## 
-## Default: default
-## 
-## Acceptable values:
-##   - text
-libsnarl.realm = default
 
 ## Domain this listener is listening to.
 ## 
@@ -725,6 +724,53 @@ mdns.client.pool.initial = 5
 ## Acceptable values:
 ##   - an integer
 mdns.client.pool.max = 5
+
+## The default realm to use for snarl calls.
+## 
+## Default: default
+## 
+## Acceptable values:
+##   - text
+libsnarl.realm = default
+
+## The DalmatinerDB backend ip and port.
+## 
+## Acceptable values:
+##   - an IP/port pair, e.g. 127.0.0.1:10011
+## folsom_ddb.ip = 127.0.0.1:4444
+
+## The bucket to store folsom data in.
+## 
+## Default: fifo
+## 
+## Acceptable values:
+##   - text
+folsom_ddb.bucket = fifo
+
+## The prefix that is added to each metric, in total the metric
+## will be contructed [<PREFIX> | <Metric Path>]
+## 
+## Default: sniffle
+## 
+## Acceptable values:
+##   - text
+folsom_ddb.prefix = sniffle
+
+## The interval in which folsom data is checked, default is 1 Second.
+## 
+## Default: 1s
+## 
+## Acceptable values:
+##   - a time duration with units, e.g. '10s' for 10 seconds
+folsom_ddb.interval = 1s
+
+## Enables or disables metrics for the Erlang VM.
+## 
+## Default: false
+## 
+## Acceptable values:
+##   - true or false
+folsom_ddb.vm_metrics = false
 
 ## The place the SNMP agent looks for it's configuration.
 ## 
