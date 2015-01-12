@@ -18,4 +18,4 @@
 
 - name: Enable Sniffle
   service: name=sniffle state=started enabled=yes
-  when: "'no_start' not in group_names"
+  when: "'sniffle_no_start' not in group_names"
