@@ -5,12 +5,12 @@
 - name: Lookup version of Sniffle
   shell: "/opt/local/bin/pkgin list | /opt/local/bin/grep fifo-sniffle | /opt/local/bin/awk '{print $1}'"
   register: sniffle_version_installed
-  changed_when: sniffle_version_installed.stdout != "{{sniffle_version_required}}"
+  changed_when: sniffle_version_installed.stdout != "{{ sniffle_version_required }}"
   ignore_errors: True
 
 - name: Install/Upgrade Sniffle
   command: "pkg_add -u http://release.project-fifo.net/pkg/'{{sniffle_release}}'/'{{sniffle_version_required}}'.tgz"
-  when: sniffle_version_installed.stdout != "{{sniffle_version_required}}"
+  when: sniffle_version_installed.stdout != "{{ sniffle_version_required }}"
 
 - name: Configure Sniffle
   template: src=sniffle-config.j2 dest=/opt/local/fifo-sniffle/etc/sniffle.conf backup=yes
