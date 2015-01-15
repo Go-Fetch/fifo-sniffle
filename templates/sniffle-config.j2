@@ -790,6 +790,6 @@ snmp.config_dir = snmp/conf/
 snmp.data_dir = /var/db/sniffle
 
 
-{% if ansible_fqdn in groups['no_sniffle_mdns'] %}
+{% if 'no_sniffle_mdns' in group_names %}
 mdns.server = disabled
 {% endif %}

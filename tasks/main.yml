@@ -3,14 +3,14 @@
 # Copyright 2015, John Paul the Great Catholic University
 
 - name: Lookup version of Sniffle
-  shell: pkgin list | grep fifo-sniffle | awk '{print $1}'
+  shell: "/opt/local/bin/pkgin list | /opt/local/bin/grep fifo-sniffle | /opt/local/bin/awk '{print $1}'"
   register: sniffle_version_installed
-  changed_when: sniffle_version_installed.stdout != '{{sniffle_version_required}}'
+  changed_when: sniffle_version_installed.stdout != "{{ sniffle_version_required }}"
   ignore_errors: True
 
 - name: Install/Upgrade Sniffle
-  command: pkg_add -u http://release.project-fifo.net/pkg/'{{sniffle_release}}'/'{{sniffle_version_required}}'.tgz 
-  when: sniffle_version_installed.stdout != '{{sniffle_version_required}}'
+  command: "pkg_add -u http://release.project-fifo.net/pkg/'{{sniffle_release}}'/'{{sniffle_version_required}}'.tgz"
+  when: sniffle_version_installed.stdout != "{{sniffle_version_required}}"
 
 - name: Configure Sniffle
   template: src=sniffle-config.j2 dest=/opt/local/fifo-sniffle/etc/sniffle.conf backup=yes
@@ -18,4 +18,4 @@
 
 - name: Enable Sniffle
   service: name=sniffle state=started enabled=yes
-  when: "'sniffle_no_start' not in group_names"
+  when: "sniffle_no_start" not in {{ group_names }}
