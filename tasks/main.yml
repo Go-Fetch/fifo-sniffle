@@ -21,8 +21,3 @@
   service: name=sniffle state=started enabled=yes
   when: "'sniffle_no_start' not in {{ group_names }}"
   register: sniffle_service_start
-
-
-- name: Pause for Sniffle Startup
-  pause: seconds=20
-  when: sniffle_service_start.changed != False
