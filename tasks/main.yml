@@ -16,6 +16,10 @@
   template: src=sniffle-config.j2 dest=/opt/local/fifo-sniffle/etc/sniffle.conf backup=yes
   notify: Bounce Sniffle
 
+- name: Enable EPMD
+  service: name=epmd state=started enabled=yes
+  when: "'sniffle_no_start' not in {{ group_names }}"
+  
 - name: Enable Sniffle
   service: name=sniffle state=started enabled=yes
   when: "'sniffle_no_start' not in {{ group_names }}"
