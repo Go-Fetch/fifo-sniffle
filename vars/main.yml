@@ -3,7 +3,7 @@
 # Copyright 2015, John Paul the Great Catholic University
 
 sniffle_release: rel
-sniffle_version_required: fifo-sniffle-0.6.1p3
+sniffle_version_required: fifo-sniffle-0.6.1p9
 sniffle_cookie: <<sniffle_cookie>>
 s3_access_key: <<s3_access_key>>
 s3_secret_key: <<s3_secret_key>>
