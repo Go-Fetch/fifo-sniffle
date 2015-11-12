@@ -58,54 +58,6 @@ ip = {{ ansible_default_ipv4['address'] }}:4210
 ##   - a time duration with units, e.g. '10s' for 10 seconds
 ## broadcast_interval = 2m
 
-## The Backend to store large data objects in, this applies to snapshots
-## and images. Objects stored in one backend will not be migrated to another if
-## this is changed.
-## 
-## Default: internal
-## 
-## Acceptable values:
-##   - one of: internal, s3
-large_data_backend = s3
-
-## 
-## Default: fifo-images
-## 
-## Acceptable values:
-##   - text
-s3.bucket.image = fifo-images
-
-## 
-## Default: fifo-snapshots
-## 
-## Acceptable values:
-##   - text
-s3.bucket.snapshot = fifo-snapshots
-
-## 
-## Default: fifo
-## 
-## Acceptable values:
-##   - text
-s3.bucket.general = fifo
-
-## 
-## Acceptable values:
-##   - text
-s3.access_key = {{ s3_access_key }}
-
-## 
-## Acceptable values:
-##   - text
-s3.secret_key = {{ s3_secret_key }}
-
-## 
-## Default: 127.0.0.1:8443
-## 
-## Acceptable values:
-##   - an IP/port pair, e.g. 127.0.0.1:10011
-s3.host = {{ s3_host }}
-
 ## The default Service that is announced, ther eis very very
 ## rarely any reason to change this.
 ## 
@@ -149,63 +101,15 @@ service = sniffle
 ## 
 ## Acceptable values:
 ##   - one of: on, off
-dataset.aae = on
-
-## 
-## Default: on
-## 
-## Acceptable values:
-##   - one of: on, off
-hypervisor.aae = on
-
-## 
-## Default: on
-## 
-## Acceptable values:
-##   - one of: on, off
-vm.aae = on
-
-## 
-## Default: on
-## 
-## Acceptable values:
-##   - one of: on, off
-iprange.aae = on
-
-## 
-## Default: on
-## 
-## Acceptable values:
-##   - one of: on, off
-network.aae = on
-
-## 
-## Default: off
-## 
-## Acceptable values:
-##   - one of: on, off
-img.aae = off
-
-## 
-## Default: on
-## 
-## Acceptable values:
-##   - one of: on, off
-dtrace.aae = on
-
-## 
-## Default: on
-## 
-## Acceptable values:
-##   - one of: on, off
-package.aae = on
-
-## 
-## Default: on
-## 
-## Acceptable values:
-##   - one of: on, off
 consensus = on
+
+## Schema directory
+## 
+## Default: ./share/schema
+## 
+## Acceptable values:
+##   - text
+schema_dir = ./share/schema
 
 ## Name of the Erlang node
 ## 
@@ -344,7 +248,7 @@ anti_entropy.bloomfilter = on
 ## if you plan to expand your system please set it higher and reads
 ## the manual at http://bit.ly/1ciKRkS
 ## 
-## Default: 8
+## Default: 64
 ## 
 ## Acceptable values:
 ##   - an integer
@@ -378,6 +282,15 @@ anti_entropy.bloomfilter = on
 ## Acceptable values:
 ##   - the path to a file
 ## ssl.cacertfile = $(platform_etc_dir)/cacertfile.pem
+
+## handoff.ip is the network address that Riak binds to for
+## intra-cluster data handoff.
+## 
+## Default: 127.0.0.1
+## 
+## Acceptable values:
+##   - text
+handoff.ip = {{ ansible_default_ipv4['address'] }}
 
 ## DTrace support Do not enable 'dtrace' unless your Erlang/OTP
 ## runtime is compiled to support DTrace.  DTrace is available in
@@ -442,6 +355,13 @@ platform_log_dir = /var/log/sniffle
 ## console : standard out
 ## both : log.console.file and standard out.
 ## 
+## Default: sniffle
+## 
+## Acceptable values:
+##   - text
+log.service = sniffle
+
+## 
 ## Default: file
 ## 
 ## Acceptable values:
@@ -504,19 +424,45 @@ log.watchdog.level = error
 ##   - text
 log.watchdog.cluster = fifo
 
-## the log level of the watchdog log
-## 
-## Default: sniffle
-## 
-## Acceptable values:
-##   - text
-log.watchdog.service = sniffle
-
 ## The ip of the watchdog server
 ## 
 ## Acceptable values:
 ##   - an IP/port pair, e.g. 127.0.0.1:10011
 ## log.watchdog.host.name = 127.0.0.1:4444
+
+## The ip of the graylog server
+## 
+## Default: off
+## 
+## Acceptable values:
+##   - an IP/port pair, e.g. 127.0.0.1:10011
+##   - the text "off"
+## log.graylog.host = 127.0.0.1:12201
+
+## the log level of the graylog log
+## 
+## Default: info
+## 
+## Acceptable values:
+##   - one of: debug, info, warning, error
+log.graylog.level = info
+
+## The ip of the graylog server
+## 
+## Default: off
+## 
+## Acceptable values:
+##   - an IP/port pair, e.g. 127.0.0.1:10011
+##   - the text "off"
+## log.logstash.host = 127.0.0.1:9125
+
+## the log level of the graylog log
+## 
+## Default: info
+## 
+## Acceptable values:
+##   - one of: debug, info, warning, error
+log.logstash.level = info
 
 ## Whether to write a crash log, and where.
 ## Commented/omitted/undefined means no crash logger.
@@ -587,14 +533,6 @@ log.error.messages_per_second = 100
 ## Acceptable values:
 ##   - text
 db.dir = /var/db/sniffle
-
-## Default database destination
-## 
-## Default: leveldb
-## 
-## Acceptable values:
-##   - one of: leveldb, hanoidb, bitcask
-db.backend = leveldb
 
 ## leveldb data_root
 ## 
@@ -737,7 +675,7 @@ libsnarl.realm = default
 ## 
 ## Acceptable values:
 ##   - an IP/port pair, e.g. 127.0.0.1:10011
-## folsom_ddb.ip = 127.0.0.1:4444
+## folsom_ddb.ip = {{ ansible_default_ipv4['address'] }}:5555
 
 ## The bucket to store folsom data in.
 ## 
@@ -750,11 +688,11 @@ folsom_ddb.bucket = fifo
 ## The prefix that is added to each metric, in total the metric
 ## will be contructed [<PREFIX> | <Metric Path>]
 ## 
-## Default: sniffle
+## Default: sniffle@127.0.0.1
 ## 
 ## Acceptable values:
 ##   - text
-folsom_ddb.prefix = sniffle
+folsom_ddb.prefix = sniffle@{{ ansible_default_ipv4['address'] }}
 
 ## The interval in which folsom data is checked, default is 1 Second.
 ## 
@@ -788,8 +726,3 @@ snmp.config_dir = snmp/conf/
 ## Acceptable values:
 ##   - text
 snmp.data_dir = /var/db/sniffle
-
-
-{% if 'no_sniffle_mdns' in group_names %}
-mdns.server = disabled
-{% endif %}

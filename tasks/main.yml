@@ -3,7 +3,7 @@
 # Copyright 2015, John Paul the Great Catholic University
 
 - name: Lookup version of Sniffle
-  shell: "pkgin list | grep fifo-sniffle | awk '{print $1}'"
+  script: version
   register: sniffle_version_installed
   changed_when: "sniffle_version_installed.stdout != '{{ sniffle_version_required }}'"
   ignore_errors: True
@@ -19,7 +19,7 @@
 - name: Enable EPMD
   service: name=epmd state=started enabled=yes
   when: "'sniffle_no_start' not in {{ group_names }}"
-  
+
 - name: Enable Sniffle
   service: name=sniffle state=started enabled=yes
   when: "'sniffle_no_start' not in {{ group_names }}"
