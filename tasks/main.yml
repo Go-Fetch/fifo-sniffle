@@ -3,25 +3,13 @@
 # Copyright 2015, John Paul the Great Catholic University
 
 - name: Lookup version of Sniffle
-  shell: "pkgin list | grep fifo-sniffle | awk '{print $1}'"
+  shell: "pkgin list | grep fifo-sniffle | awk -F'[;]' '{print $1}'"
   register: sniffle_version_installed
   changed_when: "sniffle_version_installed.stdout != '{{ sniffle_version_required }}'"
   ignore_errors: True
 
-- name: Check for Project Fifo GPG Key
-  shell: "gpg --keyring /opt/local/etc/gnupg/pkgsrc.gpg --fingerprint | grep '{{ fifo_gpg_keyid }}'"
-  register: fifo_gpg_key
-  changed_when: fifo_gpg_key.rc != 0
-  ignore_errors: True
-  when: sniffle_version_installed.stdout != "{{ sniffle_version_required }}"
-
-- name: Install Project Fifo GPG Key
-  shell: "curl https://project-fifo.net/fifo.gpg | gpg --primary-keyring /opt/local/etc/gnupg/pkgsrc.gpg --import"
-  when: fifo_gpg_key.rc != 0
-
-- name: Install/Upgrade Sniffle
-  command: "pkg_add -u http://release.project-fifo.net/pkg/'{{ sniffle_release }}'/'{{ sniffle_version_required }}'.tgz"
-  when: sniffle_version_installed.stdout != "{{ sniffle_version_required }}"
+- include: install.yml
+  when: "sniffle_version_installed.stdout != '{{ sniffle_version_required }}'"
 
 - name: Configure Sniffle
   template: src=sniffle-config.j2 dest=/opt/local/fifo-sniffle/etc/sniffle.conf backup=yes
@@ -38,4 +26,16 @@
 
 - name: Pause for Sniffle Startup
   pause: seconds=20
-  when: sniffle_service_start.changed != False
+  when: "sniffle_service_start.changed == True"
+
+- name: Check Sniffle Ring Membership
+  script: members
+  register: sniffle_ring_membership
+  changed_when: "sniffle_ring_membership.stdout.find('{{ sniffle_ring_leader_ip }}') == -1"
+  when: "'{{ sniffle_ring_leader_ip }}' != '{{ ansible_default_ipv4['address'] }}'"
+
+# - debug: var=sniffle_ring_membership
+
+# - include: join.yml
+#   serial: 1
+#   when: "sniffle_ring_membership.changed == True"
